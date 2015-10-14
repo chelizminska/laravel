@@ -13,17 +13,26 @@
 //Public//////////////////
 //baseC
 Route::get('/', ['as' => 'home', 'uses' => 'Base\BaseController@indexAction']);
-Route::get('/fishes', 'Base\BaseController@fishesAction');
-Route::get('/fishes/{arg1}', 'Base\BaseController@fishInfoAction');
-Route::get('/news', 'Base\BaseController@newsAction');
-Route::get('/about', 'Base\BaseController@aboutAction');
-Route::get('/contacts', 'Base\BaseController@contactsAction');
-Route::get('/aaa', 'Base\BaseController@aaaAction');
-Route::get('/bbb', 'Base\BaseController@bbbAction');
-Route::get('/forum/{topic}', 'Base\BaseController@forumAction');
-Route::get('/forum', 'Base\BaseController@forumBaseAction');
+Route::get('/fishes', 'Base\BaseController@showFishesAction');
+Route::get('/fishes/{id}', 'Base\BaseController@showFishInfoAction');
+Route::get('/news', 'Base\BaseController@showNewsAction');
+Route::get('/view_news', 'Base\BaseController@viewNewsAction');
+Route::get('/about', 'Base\BaseController@showAboutAction');
+Route::get('/contacts', 'Base\BaseController@showContactsAction');
+Route::get('/forum/{id?}', 'Base\BaseController@showForumAction');
+Route::get('/forum/{id?}/newtopic', 'Base\BaseController@getAddForumTopicAction');
+Route::post('/forum/{id?}/newtopic', 'Base\BaseController@postAddForumTopicAction');
+Route::post('/forum/{id}/add', 'Base\BaseController@addForumMessageAction');
+Route::get('/personal_info', 'Base\BaseController@showPersonalInfoAction');
+Route::get('/personal_messages', 'Base\BaseController@showPersonalMessagesAction');
+Route::get('/personal_message', 'Base\BaseController@viewPersonalMessageAction');
+Route::get('/user', 'Base\BaseController@showUserInfoAction');
+Route::get('/personal_info_change', 'Base\BaseController@getChangePersonalInfoAction');
+Route::post('/personal_info_save', 'Base\BaseController@postChangePersonalInfoAction');
+Route::get('/send_message_to_user', 'Base\BaseController@getSendUserMessageAction');
+Route::post('/send_message_to_user', 'Base\BaseController@postSendUserMessageAction');
 
-//admC
+//authC
 Route::get('/register', ['as' => 'user-registration', 'uses' => 'Base\AuthController@getRegisterAction']);
 Route::post('/register', ['uses' => 'Base\AuthController@postRegisterAction']);
 Route::get('/login', ['as' => 'user-login', 'uses' => 'Base\AuthController@getLoginAction']);
@@ -36,17 +45,46 @@ Route::get('/logout', 'Base\AuthController@logoutAction');
 //Admin////////////////////
 //baseC
 Route::get('/admin', ['as' => 'admin', 'uses' => 'Admin\BaseController@indexAction']);
-Route::get('/admin/contents', 'Admin\BaseController@contentManagementAction');
-Route::get('/admin/users', 'Admin\BaseController@usersManagementAction');
-Route::get('/admin/statistics', 'Admin\BaseController@siteStatisticsAction');
+Route::get('/admin/contents', 'Admin\BaseController@showContentManagementAction');
+Route::get('/admin/users', 'Admin\BaseController@showUsersManagementAction');
+Route::get('/admin/users/{id}', 'Admin\BaseController@showUserInfoAction');
+Route::post('/admin/users/{id}/giveWarning', 'Admin\BaseController@giveWarningAction');
+Route::get('/admin/statistics', 'Admin\BaseController@showSiteStatisticsAction');
 
-Route::get('/admin/contents/home', 'Admin\BaseController@homeEditingAction');
-Route::get('/admin/contents/forum', 'Admin\BaseController@forumEditingAction');
-Route::get('/admin/contents/fishes', 'Admin\BaseController@fishesEditingAction');
-Route::get('/admin/contents/about', 'Admin\BaseController@aboutEditingAction');
-Route::get('/admin/contents/contacts', 'Admin\BaseController@contactsEditingAction');
+Route::get('/admin/contents/home', 'Admin\BaseController@getEditHomeAction');
+Route::post('/admin/contents/home', 'Admin\BaseController@postEditHomeAction');
 
-//admC
+Route::get('/admin/contents/forum/{id?}', 'Admin\BaseController@showForumAction');
+Route::get('/admin/contents/forum/{id}/new_topic', 'Admin\BaseController@getAddForumNewTopicAction');
+Route::post('/admin/contents/forum/{id}/new_topic', 'Admin\BaseController@postAddForumNewTopicAction');
+Route::get('/admin/contents/forum/{id?}/add', 'Admin\BaseController@getAddForumAction');
+//Route::post('/admin/contents/forum/{id?}/add', 'Admin\BaseController@postAddForumAction');
+//Route::get('/admin/contents/forum/{id}/edit', 'Admin\BaseController@getEditForumAction');
+Route::post('/admin/contents/forum/{id}/edit', 'Admin\BaseController@postEditForumAction');
+Route::get('/admin/contents/forum/{page_id}/delete', 'Admin\BaseController@deleteForumTopicAction');
+Route::post('/admin/contents/forum/{page_id}/{message_id}/delete', 'Admin\BaseController@deleteForumTopicMessageAction');
+
+Route::get('/admin/contents/fishes', 'Admin\BaseController@showFishesAction');
+Route::get('/admin/contents/fishes/edit', 'Admin\BaseController@getEditFishAction');
+Route::post('/admin/contents/fishes/edit', 'Admin\BaseController@postEditFishAction');
+Route::get('/admin/contents/fishes/delete', 'Admin\BaseController@deleteFishAction');
+Route::get('/admin/contents/fishes/add', 'Admin\BaseController@getAddFishAction');
+Route::post('/admin/contents/fishes/add', 'Admin\BaseController@postAddFishAction');
+
+Route::get('/admin/contents/news', 'Admin\BaseController@showNewsAction');
+Route::get('/admin/contents/news/edit', 'Admin\BaseController@getEditNewsAction');
+Route::post('/admin/contents/news/edit', 'Admin\BaseController@postEditNewsAction');
+Route::post('/admin/contents/news/delete', 'Admin\BaseController@deleteNewsAction');
+Route::get('/admin/contents/news/add', 'Admin\BaseController@getAddNewsAction');
+Route::post('/admin/contents/news/add', 'Admin\BaseController@postAddNewsAction');
+
+Route::get('/admin/contents/about', 'Admin\BaseController@getEditAboutAction');
+Route::post('/admin/contents/about', 'Admin\BaseController@postEditAboutAction');
+
+Route::get('/admin/contents/contacts', 'Admin\BaseController@getEditContactsAction');
+Route::post('/admin/contents/contacts', 'Admin\BaseController@postEditContactsAction');
+
+//authC
 Route::get('/admin/register', 'Admin\AuthController@getRegisterAction');
 Route::post('/admin/register', 'Admin\AuthController@postRegisterAction');
 Route::get('/admin/login', 'Admin\AuthController@getLoginAction');

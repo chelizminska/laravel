@@ -32,7 +32,7 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        //$this->middleware('guest', ['except' => 'getLogout']);
+       // $this->middleware('ban');
     }
 
     /**
@@ -44,7 +44,7 @@ class AuthController extends Controller
     protected function validator(array $data)
     {
         return Validator::make($data, [
-            'name' => 'required|max:255',
+            'user_name' => 'required|max:255',
             'email' => 'required|email|max:255|unique:users',
             'password' => 'required|confirmed|min:6',
         ]);
@@ -59,7 +59,7 @@ class AuthController extends Controller
     protected function create(array $data)
     {
         return User::create([
-            'name' => $data['name'],
+            'user_name' => $data['user_name'],
             'email' => $data['email'],
             'password' => bcrypt($data['password']),
         ]);
@@ -73,7 +73,7 @@ class AuthController extends Controller
     public function postRegisterAction()
     {
         $rules = array(
-            'username' => 'required',
+            'user_name' => 'required',
             'email' => 'required',
             'password' => 'required',
             'password-confirmation' => 'required',
@@ -82,11 +82,11 @@ class AuthController extends Controller
         if($validator->fails()){
             return redirect('/register')->withErrors(array("Не все поля были заполнены."));
         }
-        if(Input::get('password') != Input::get('password-confirmation')){
+        if(Input::get('password') != Input::get('password_confirmation')){
             return redirect('/register')->withErrors(array("Введенные пароли не совпадают."));
         }
         User::create([
-            'name' => Input::get('username'),
+            'user_name' => Input::get('user_name'),
             'email' => Input::get('email'),
             'password' => password_hash(Input::get('password'), PASSWORD_DEFAULT),
         ]);
@@ -95,22 +95,34 @@ class AuthController extends Controller
 
     public function getLoginAction()
     {
-        return view('base.login');
+        if (Auth::check())
+        {
+            return redirect('/');
+        }
+        $pre_url = $_SERVER['HTTP_REFERER'];
+        return view('base.login', ['url' => $pre_url]);
     }
 
     public function postLoginAction()
     {
-        $rules = array('username' => 'required', 'password' => 'required');
+        $rules = array('user_name' => 'required', 'password' => 'required');
         $validator = Validator::make(Input::all(), $rules);
+        $pre_url = Input::get('url');
         if($validator->fails()){
-            return redirect('/login')->withErrors(array("Введите логин и пароль."));
+            return redirect()->route('user-login')->withErrors(array("Введите логин и пароль."));
         }
         $auth = Auth::attempt(array(
-            'email' => Input::get('username'),
+            'user_name' => Input::get('user_name'),
             'password' => Input::get('password'),
+            'isAdmin' => User::where('user_name', '=', Input::get('user_name'))->first()->isAdmin,
         ), false);
         if(! $auth){
-            return redirect('/login')->withErrors(array("Ошибка авторизации."));
+            return redirect()->route('user-login')->withErrors(array("Ошибка авторизации."));
+        }
+        if (Auth::user()->banning_points > 5)
+        {
+            Auth::logout();
+            return redirect()->route('user-login')->withErrors(array("Вы были заблокированы за нарушение правил сайта."));
         }
         return redirect('/');
     }
@@ -123,5 +135,6 @@ class AuthController extends Controller
         }
         Auth::logout();
         return redirect('/');
+        //return redirect(Input::get('url'));
     }
 }

@@ -1,4 +1,8 @@
 @extends('base.layout')
 @section('content')
-    It's news with no words.
+    @foreach ($news as $n)
+        <div>
+            <a href="/view_news?id={{ $n->id }}">{{ $n->title }}</a>
+        </div>
+    @endforeach
 @endsection

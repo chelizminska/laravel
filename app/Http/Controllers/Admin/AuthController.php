@@ -44,7 +44,7 @@ class AuthController extends Controller
     protected function validator(array $data)
     {
         return Validator::make($data, [
-            'name' => 'required|max:255',
+            'user_name' => 'required|max:255',
             'email' => 'required|email|max:255|unique:users',
             'password' => 'required|confirmed|min:6',
         ]);
@@ -59,7 +59,7 @@ class AuthController extends Controller
     protected function create(array $data)
     {
         return User::create([
-            'name' => $data['name'],
+            'user_name' => $data['user_name'],
             'email' => $data['email'],
             'password' => bcrypt($data['password']),
         ]);
@@ -67,18 +67,21 @@ class AuthController extends Controller
 
     public function getLoginAction()
     {
+        if (Auth::check()){
+            return redirect('/admin');
+        }
         return view('admin.login');
     }
 
     public function postLoginAction()
     {
-        $rules = array('username' => 'required', 'password' => 'required');
+        $rules = array('user_name' => 'required', 'password' => 'required');
         $validator = Validator::make(Input::all(), $rules);
         if($validator->fails()){
             return redirect('admin/login')->withErrors(array("Введите логин и пароль."));
         }
         $auth = Auth::attempt(array(
-            'email' => Input::get('username'),
+            'user_name' => Input::get('user_name'),
             'password' => Input::get('password'),
             'isAdmin' => true,
         ), false);
@@ -96,20 +99,20 @@ class AuthController extends Controller
     public function postRegisterAction()
     {
         $rules = array(
-            'username' => 'required',
+            'user_name' => 'required',
             'email' => 'required',
             'password' => 'required',
-            'password-confirmation' => 'required',
+            'password_confirmation' => 'required',
         );
         $validator = Validator::make(Input::all(), $rules);
         if($validator->fails()){
             return redirect('admin/register')->withErrors(array("Не все поля были заполнены."));
         }
-        if(Input::get('password') != Input::get('password-confirmation')){
+        if(Input::get('password') != Input::get('password_confirmation')){
             return redirect('admin/register')->withErrors(array("Введенные пароли не совпадают."));
         }
         User::create([
-            'name' => Input::get('username'),
+            'user_name' => Input::get('user_name'),
             'email' => Input::get('email'),
             'password' => password_hash(Input::get('password'), PASSWORD_DEFAULT),
             'isAdmin' => true,

@@ -1,10 +1,11 @@
 @extends('admin.layout')
 @section('content')
     <div class="categories">
-        <a href="/admin/home">Главная</a>
-        <a href="/admin/forum">Форум</a>
-        <a href="/admin/fishes">Рыбы беларуси</a>
-        <a href="/admin/about">О нас</a>
-        <a href="/admin/contacts">Контакты</a>
+        <a href="/admin/contents/home">Главная</a><br>
+        <a href="/admin/contents/forum">Форум</a><br>
+        <a href="/admin/contents/fishes">Рыбы беларуси</a><br>
+        <a href="/admin/contents/news">Новости</a><br>
+        <a href="/admin/contents/about">О клубе</a><br>
+        <a href="/admin/contents/contacts">Контакты</a><br>
     </div>
 @endsection

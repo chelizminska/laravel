@@ -5,7 +5,7 @@
     @endforeach
     <div class="login">
         <form action="/admin/login" method="post">
-            <input type="text" name="username" placeholder="username">
+            <input type="text" name="user_name" placeholder="username">
             <input type="password" name="password" placeholder="password">
             <input type="submit" value="Войти">
         </form>
